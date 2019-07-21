@@ -1,6 +1,6 @@
 ## Proxy parser chrome extension
 
-Makes json string in one click from tables of public proxy lists
+Makes structured string in one click from tables of public proxy lists
 
 #### Installation
 - Run file `build.bat`.
