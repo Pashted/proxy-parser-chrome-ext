@@ -111,10 +111,6 @@ let selector, nextPage, filter, schema, currentLink, existsData = '', resultArea
                                 .toUpperCase();
                             break;
 
-                        case 'status':
-                            res[name] = 'new';
-                            break;
-
                         case 'source':
                             res[name] = nextPage.val().replace(/^.*?\/{2}([^/]+).*$/, '$1');
                             break;
@@ -128,12 +124,13 @@ let selector, nextPage, filter, schema, currentLink, existsData = '', resultArea
                 }, {});
 
 
-            result.push(addr);
+            result.push(Object.values(addr).join(","));
 
         });
 
+        result = result.join("\n") + "\n";
 
-        return JSON.stringify(result);
+        return result;
     };
 
 
