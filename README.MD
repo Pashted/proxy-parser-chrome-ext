@@ -8,7 +8,7 @@ Makes json string in one click from tables of public proxy lists
 - Enable developer mode.
 - Click `Load unpacked extension`.
 - Select `bundle` folder from the root of this project.
-- Use it from common popup window.
+- Use it through common popup window from loaded proxy list page.
 
 #### Preview
 ![Preview](preview.png)
