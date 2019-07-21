@@ -4,6 +4,8 @@ import appendToLog from './logger'
 
 let selector, nextPage, filter, schema, currentLink, existsData = '', resultArea,
 
+    typeValue = { HTTP: 'h', HTTPS: 's' },
+    anonValue = { Anonymous: 2, HighAnonymous: 4 },
 
     getParams = () => new Promise(resolve => {
         chrome.storage.local.get([ 'userParams' ], ({ userParams }) => {
@@ -71,57 +73,114 @@ let selector, nextPage, filter, schema, currentLink, existsData = '', resultArea
         }
     },
 
+    getSchema = () => schema.val().split(',').map(el => el.trim()),
+
+    reducerObj = td => (result, name, n) => {
+        if (!name)
+            return result;
+
+        switch (name) {
+
+            case 'port':
+                result[name] = parseInt(td.eq(n).text().trim());
+                break;
+
+            case 'type':
+                result[name] = typeValue[td.eq(n).text()] || 0;
+                break;
+
+            case 'anon':
+                result[name] = anonValue[td.eq(n).text().replace(/\s/, '')] || 0;
+                break;
+
+            case 'country':
+                result[name] = td.eq(n).find('img').attr('src')
+                    .replace(/^.*\/([a-z]+?)\.[^.]+$/i, '$1')
+                    .toUpperCase();
+                break;
+
+            case 'source':
+                result[name] = nextPage.val().replace(/^.*?\/{2}([^/]+).*$/, '$1');
+                break;
+
+            default:
+                result[name] = td.eq(n).text().trim();
+        }
+
+        return result;
+    },
 
     convertData = data => {
 
-        let _schema = schema.val().split(',').map(el => el.trim()),
-
-            typeValue = { HTTP: 'h', HTTPS: 's' },
-            anonValue = { Anonymous: 2, HighAnonymous: 4 },
+        let _schema = getSchema(),
             result = [];
 
         $(data).find('tr:not(:empty)').each((i, tr) => {
 
-            let $td = $(tr).find('td'),
-
-                addr = _schema.reduce((res, name, n) => {
-                    if (!name)
-                        return res;
-
-                    switch (name) {
-
-                        case 'port':
-                            res[name] = parseInt($td.eq(n).text().trim());
-                            break;
-
-                        case 'type':
-                            res[name] = typeValue[$td.eq(n).text()];
-                            break;
-
-                        case 'anon':
-                            res[name] = anonValue[$td.eq(n).text().replace(/\s/, '')];
-                            break;
-
-                        case 'country':
-                            res[name] = $td.eq(n).find('img').attr('src')
-                                .replace(/^.*\/([a-z]+?)\.[^.]+$/i, '$1')
-                                .toUpperCase();
-                            break;
-
-                        case 'source':
-                            res[name] = nextPage.val().replace(/^.*?\/{2}([^/]+).*$/, '$1');
-                            break;
-
-                        default:
-                            res[name] = $td.eq(n).text().trim();
-                    }
-
-                    return res;
-
-                }, {});
-
+            let addr = _schema.reduce(
+                reducerObj($(tr).find('td')),
+                {}
+            );
 
             result.push(Object.values(addr).join(","));
+
+        });
+
+        result = result.join("\n") + "\n";
+
+        return result;
+    },
+
+
+    reducer = line => (result, name, n) => {
+        if (!name)
+            return result;
+
+        let str = line[n] || '';
+
+        switch (name) {
+
+            case 'port':
+                result.push(parseInt(str.trim()));
+                break;
+
+            case 'type':
+                result.push(typeValue[str] || 0);
+                break;
+
+            case 'anon':
+                result.push(anonValue[str.replace(/\s/, '')] || 0);
+                break;
+
+            case 'country':
+                result.push(str.toUpperCase() || 0);
+                break;
+
+            case 'source':
+                result.push(nextPage.val().replace(/^.*?\/{2}(?:www\.)?([^/]+).*$/, '$1'));
+                break;
+
+            default:
+                result.push(str.trim());
+        }
+
+        return result;
+
+    },
+
+    convertCustomData = data => {
+
+        let _schema = getSchema(),
+            result = [];
+
+        data.trim().split("\n").forEach(line => {
+
+            let addr = _schema.reduce(
+                reducer(line.replace(':', ',').split(',')),
+                []
+            );
+
+            result.push(addr.join(","));
 
         });
 
@@ -178,7 +237,7 @@ getParams().then(async params => {
 
                 let { res } = await Process();
 
-                resultArea.val((existsData + convertData(res)).replace('][', ','));
+                resultArea.val(existsData + convertData(res));
             }
         });
 
@@ -202,6 +261,13 @@ getParams().then(async params => {
             );
         }
     });
+
+    $('.convert').on({
+        click() {
+            console.log();
+            resultArea.val(convertCustomData(resultArea.val()));
+        }
+    })
 
 
 });
