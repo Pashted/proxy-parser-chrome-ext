@@ -144,20 +144,27 @@ getParams().then(async params => {
     if (params.next)
         nextPage.val(params.next);
 
+
     filter = $('.clean-selector').blur(setParams);
     if (params.garbage)
         filter.val(params.garbage);
+
 
     schema = $('.schema').blur(setParams);
     if (params.schema)
         schema.val(params.schema);
 
+
     resultArea = $('.result');
 
-    resultArea.focus(() => {
-        resultArea[0].select();
-        navigator.clipboard.writeText(resultArea.val().trim());
-        appendToLog('Result copied to clipboard');
+    resultArea.on({
+        focus() {
+            resultArea[0].select();
+        },
+        dblclick() {
+            navigator.clipboard.writeText(resultArea.val().trim());
+            appendToLog('Result copied to clipboard');
+        }
     });
 
 
