@@ -1,8 +1,8 @@
-##Proxy parser chrome extension
+## Proxy parser chrome extension
 
 Makes json string in one click from tables of public proxy lists
 
-####Installation
+#### Installation
 - Run file `build.bat`.
 - Open `chrome://extensions/` page in your browser.
 - Enable developer mode.
@@ -10,5 +10,5 @@ Makes json string in one click from tables of public proxy lists
 - Select `bundle` folder from the root of this project.
 - Use it from common popup window.
 
-####Preview
+#### Preview
 ![Preview](preview.png)
