@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="template.css">
+    <title>Document</title>
+</head>
+<body>
+
+<div class="uk-padding uk-width-large">
+
+    <div class="uk-margin-small">
+        <div class="uk-h5 uk-margin-small">Content selector</div>
+        <input type="text" class="selector uk-input" value=".DataGrid">
+    </div>
+
+
+    <div class="uk-margin-small">
+        <div class="uk-h5 uk-margin-small">Clean filter</div>
+        <input type="text" class="clean-selector uk-input" value="script, .Caption, td:nth-child(5) ~ td, td:first-child:last-child">
+    </div>
+
+
+    <div class="uk-margin-small">
+        <div class="uk-h5 uk-margin-small">Schema</div>
+        <input type="text" class="schema uk-input" value="ip, port, type, anon, country, status, source">
+    </div>
+
+
+    <div class="uk-margin-small">
+        <div class="uk-h5 uk-margin-small"><a class="current-link" href="">Next page template</a></div>
+        <input type="text" class="next-page-template uk-input" value="http://freeproxylists.net/?a[]=1&a[]=2&u=70&page=">
+    </div>
+
+
+    <div class="uk-margin-small">
+        <div class="uk-flex uk-flex-between">
+
+            <div>
+                <button class="start uk-button uk-button-primary">Start</button>
+                <button class="next uk-button uk-button-default">Next</button>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="uk-margin-top">
+        <div class="uk-h5 uk-margin-small">Result</div>
+        <textarea rows="5" class="result uk-textarea"></textarea>
+    </div>
+
+
+    <div class="log"></div>
+
+</div>
+
+<script src="scripts/popup.js"></script>
+</body>
+</html>
