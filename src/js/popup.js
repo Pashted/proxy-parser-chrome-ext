@@ -157,6 +157,12 @@ getParams().then(async params => {
 
     resultArea = $('.result');
 
+    resultArea.focus(() => {
+        resultArea[0].select();
+        navigator.clipboard.writeText(resultArea.val().trim());
+        appendToLog('Result copied to clipboard');
+    });
+
 
     $('.start')
         .on({
