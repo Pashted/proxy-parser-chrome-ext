@@ -20,7 +20,7 @@ let selector, nextPage, filter, schema, currentLink, existsData = '', resultArea
         };
 
         chrome.storage.local.set({ userParams }, () => {
-            appendToLog('Params saved');
+            // appendToLog('Params saved');
 
             resolve(userParams);
         });
@@ -52,22 +52,19 @@ let selector, nextPage, filter, schema, currentLink, existsData = '', resultArea
 
         try {
 
-            let userParams = await getParams(),
+            let userParams = await getParams();
 
-                result = await new Promise(resolve => {
-                    chrome.runtime.onMessage.addListener(function listener(result) {
-                        chrome.runtime.onMessage.removeListener(listener);
-                        resolve(result);
-                    });
+            chrome.tabs.executeScript(
+                { code: `var userParams = ${JSON.stringify(userParams)};` },
+                () => chrome.tabs.executeScript({ file: './scripts/main.js' })
+            );
 
-                    chrome.tabs.executeScript(
-                        { code: `var userParams = ${JSON.stringify(userParams)};` },
-                        () => chrome.tabs.executeScript({ file: './scripts/main.js' })
-                    );
+            return new Promise(resolve => {
+                chrome.runtime.onMessage.addListener(function listener(result) {
+                    chrome.runtime.onMessage.removeListener(listener);
+                    resolve(result);
                 });
-
-            return result;
-
+            });
 
         } catch (e) {
             console.log(e);
